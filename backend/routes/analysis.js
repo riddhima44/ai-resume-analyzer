@@ -120,8 +120,18 @@ router.post('/analyze', protect, async (req, res) => {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     // Construct detailed prompt instructing structured JSON output
-    const prompt = `You are an expert recruiter and Applicant Tracking System (ATS) optimization engine.
+    const prompt = `You are a strict and highly critical expert recruiter and Applicant Tracking System (ATS) optimization engine.
 Analyze the following Resume and Job Description.
+
+CRITICAL SCORING RULES:
+1. Be extremely rigorous, objective, and realistic with the "atsScore".
+2. Do NOT be generous or lenient. Do NOT give high scores (like 80%+) unless the resume represents an exceptionally strong, near-perfect match for the target job description.
+3. Most average or decent resumes should score between 30% and 60% if they lack exact core keywords, specific technologies, or matched years of experience.
+4. Deduct points heavily for:
+   - Missing core skills/technologies mentioned in the Job Description.
+   - Mismatches in role level (e.g. junior applying to senior, or lack of leadership representation).
+   - Accomplishments that lack quantifiable metrics (numbers, dollar amounts, percentages).
+   - Poor phrasing, generic bullet points, or lack of strong action verbs.
 
 Resume Text:
 """
