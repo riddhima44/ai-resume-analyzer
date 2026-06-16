@@ -26,6 +26,30 @@ const upload = multer({
   }
 });
 
+// Robust JSON parser helper for Gemini responses (handles invalid backslash escapes like \[ or \])
+const parseRobustJson = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    // Replace invalid JSON escape characters (anything not followed by n, r, t, b, f, ", \, /, u)
+    const cleaned = text.replace(/\\([^nrtbf"\\/u])/g, '$1');
+    try {
+      return JSON.parse(cleaned);
+    } catch (innerError) {
+      // Fallback: extract the content field directly using regex if parsing still fails
+      const match = text.match(/"content"\s*:\s*"([\s\S]*?)"\s*\}/);
+      if (match && match[1]) {
+        const extracted = match[1]
+          .replace(/\\n/g, '\n')
+          .replace(/\\"/g, '"')
+          .replace(/\\/g, '');
+        return { content: extracted };
+      }
+      throw error; // throw original parsing error
+    }
+  }
+};
+
 // @route   POST /api/analysis/upload
 // @desc    Upload resume PDF/DOCX and parse text in-memory
 // @access  Private
@@ -139,7 +163,7 @@ Perform a deep analysis and output a single valid JSON object matching this sche
     });
 
     const responseText = response.response.text();
-    const parsedData = JSON.parse(responseText);
+    const parsedData = parseRobustJson(responseText);
 
     // Save final analysis report
     const analysis = await Analysis.create({
@@ -216,7 +240,7 @@ Instructions:
     });
 
     const responseText = response.response.text();
-    const parsedData = JSON.parse(responseText);
+    const parsedData = parseRobustJson(responseText);
 
     // Save generated cover letter
     const coverLetter = await CoverLetter.create({
