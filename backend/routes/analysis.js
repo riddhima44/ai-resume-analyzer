@@ -133,6 +133,12 @@ CRITICAL SCORING RULES:
    - Accomplishments that lack quantifiable metrics (numbers, dollar amounts, percentages).
    - Poor phrasing, generic bullet points, or lack of strong action verbs.
 
+CRITICAL KEYWORD MATCHING RULES:
+1. Perform a strict, rigorous word-by-word and concept-by-concept comparison of the skills, technologies, tools, methodologies, and requirements in the Job Description against the Resume.
+2. Do NOT assume the candidate possesses a skill unless it is explicitly and clearly stated in their resume.
+3. If a tool, technology, software, language, framework, or core competency is required or preferred in the Job Description but is not explicitly found in the resume, you MUST list it under "missingKeywords".
+4. Do not list generic filler words (e.g., "communication", "teamwork") as keywords unless they are core requirements. Prioritize specific technical terms (e.g., "React", "Docker", "Node.js", "Jest").
+
 Resume Text:
 """
 ${resume.rawText}
